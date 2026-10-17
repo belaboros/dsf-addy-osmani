@@ -30,7 +30,7 @@ git -C "$tmp/base.git" symbolic-ref HEAD refs/heads/main
 # --- workflow -------------------------------------------------------------------
 git init --quiet --bare -b main "$tmp/wf.git"
 git clone --quiet "$tmp/wf.git" "$tmp/wf" 2>/dev/null
-(cd "$tmp/wf" && "$src/scripts/dsf/new-workflow.sh" test --base "$tmp/base.git" >/dev/null && git push --quiet -u origin main)
+(cd "$tmp/wf" && "$src/scripts/dsf/new-workflow.sh" test --base "$tmp/base.git" >/dev/null && git push --quiet -u origin main 2>/dev/null)
 [[ "$(cd "$tmp/wf" && scripts/dsf/dsf-sync.sh mode)" == workflow ]] && ok "workflow repo created on top of base" || fail "workflow mode"
 
 # --- application ------------------------------------------------------------------
