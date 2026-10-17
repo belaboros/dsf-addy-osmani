@@ -30,17 +30,21 @@ export function readSetting(file, key) {
   return line?.slice(key.length + 1);
 }
 
-// The current mode and the path prefixes it protects (factory paths expanded).
+// The current mode, the path prefixes it protects (factory paths expanded) and the exceptions it allows.
+// .dsf/modes.json comes from dsf-base; .dsf/modes.workflow.json and .dsf/modes.app.json may add
+// "protect" and "allow" entries per mode (for example a skill pack that ticks off tasks in specs/).
 export function currentMode() {
   const cfg = readJson(".dsf/modes.json", { default: "build", modes: {}, factory: [], alwaysProtect: [] });
+  const layers = [readJson(".dsf/modes.workflow.json", {}), readJson(".dsf/modes.app.json", {})];
   const name = process.env.DSF_MODE || cfg.default || "build";
   const mode = cfg.modes?.[name];
-  if (!mode) return { name, description: `unknown mode '${name}'`, protect: [], unknown: true };
+  if (!mode) return { name, description: `unknown mode '${name}'`, protect: [], allow: [], unknown: true };
+  const pick = (key) => [mode, ...layers.map((l) => l.modes?.[name] || {})].flatMap((m) => m[key] || []);
   const protect = [
     ...(cfg.alwaysProtect || []),
-    ...mode.protect.flatMap((p) => (p === "@factory" ? cfg.factory || [] : [p])),
+    ...pick("protect").flatMap((p) => (p === "@factory" ? cfg.factory || [] : [p])),
   ];
-  return { name, description: mode.description, protect };
+  return { name, description: mode.description, protect, allow: pick("allow") };
 }
 
 export function toRepoPath(p) {
@@ -49,8 +53,16 @@ export function toRepoPath(p) {
   return rel.replaceAll("\\", "/").replace(/^\.\//, "");
 }
 
-export function protectedBy(repoPath, protect) {
-  return protect.find((p) => (p.endsWith("/") ? repoPath.startsWith(p) : repoPath === p));
+// A pattern ending in "/" matches the folder and everything below it; "*" matches within one path segment.
+export function matches(repoPath, pattern) {
+  const re = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replaceAll("*", "[^/]*");
+  return new RegExp(pattern.endsWith("/") ? `^${re}` : `^${re}$`).test(repoPath);
+}
+
+// The protect rule that blocks repoPath, unless an allow rule makes an exception for it.
+export function protectedBy(repoPath, protect, allow = []) {
+  if (allow.some((a) => matches(repoPath, a))) return undefined;
+  return protect.find((p) => matches(repoPath, p));
 }
 
 export function logEvent(input, event, details = {}) {

@@ -7,7 +7,7 @@ const mode = currentMode();
 const path = toRepoPath(input.tool_input?.file_path || input.tool_input?.notebook_path);
 if (!path || path.startsWith("..")) process.exit(0);
 
-const hit = protectedBy(path, mode.protect);
+const hit = protectedBy(path, mode.protect, mode.allow);
 if (hit) {
   logEvent(input, "protect-paths-block", { mode: mode.name, path });
   deny(

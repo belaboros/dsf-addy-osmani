@@ -18,6 +18,8 @@
 .dsf/
 !.dsf/settings/workflow.json
 !.dsf/settings/app.json
+!.dsf/modes.workflow.json
+!.dsf/modes.app.json
 =.dsf/CLAUDE.workflow.md
 .claude/hooks/
 .claude/skills/dsf-

@@ -35,6 +35,8 @@ make check      # what the Stop hook and CI run
 
 The mode is separation of duties: the agent that writes the code cannot also quietly change the spec or the architecture it is judged against.
 
+Modes are defined in `.dsf/modes.json` (from dsf-base). A workflow repo can add `protect` or `allow` entries per mode in `.dsf/modes.workflow.json`, and an app in `.dsf/modes.app.json`; for example dsf-speckit allows build mode to tick off `specs/*/tasks.md`. A pattern ending in `/` covers a folder, `*` matches inside one path segment.
+
 ## Improvements flow up, updates flow down
 
 - **Down:** `make sync-pull` (or the weekly `dsf-sync` PR) merges the parent's `main`. Files marked `=` in the ownership file (README, CODEOWNERS, `.gitignore`, settings) keep the local version.

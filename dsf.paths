@@ -11,6 +11,7 @@
 
 .dsf/
 !.dsf/settings/app.json
+!.dsf/modes.app.json
 .dsf.layer
 .claude/
 !.claude/settings.local.json
@@ -19,6 +20,7 @@
 !.claude/commands/app-
 =.claude/settings.json
 .specify/
+=.specify/memory/constitution.md
 scripts/dsf/
 config/dsf/
 docs/dsf/
