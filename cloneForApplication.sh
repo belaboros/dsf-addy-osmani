@@ -146,11 +146,13 @@ if [[ -d .dsf/templates/app-owned ]]; then
   done < <(find .dsf/templates/app-owned -type f -print0)
 fi
 scripts/dsf/dsf-sync.sh setup-merge
-if [[ -d .dsf/templates/app ]]; then
+# Workflow templates first: render never overwrites, so they take precedence over the base ones.
+for t in workflow-app app; do
+  [[ -d ".dsf/templates/$t" ]] || continue
   while IFS= read -r -d '' f; do
-    render "$f" "${f#.dsf/templates/app/}"
-  done < <(find .dsf/templates/app -type f -print0)
-fi
+    render "$f" "${f#.dsf/templates/$t/}"
+  done < <(find ".dsf/templates/$t" -type f -print0)
+done
 
 # --- Task backend setup ---------------------------------------------------------
 next_steps=()

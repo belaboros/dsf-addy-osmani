@@ -51,6 +51,19 @@ Either place works, because the mechanism is symmetrical:
 - In the parent: improve, merge, then every app picks it up on its next sync.
 - In an app: improve while building, keep `make check` green, contribute back.
 
+## What a workflow repo adds
+
+A workflow repo owns only a few files on top of dsf-base (everything else is listed in `base.paths`):
+
+- `README.md`, `.dsf.layer`, `docs/workflow/`
+- `.dsf/CLAUDE.workflow.md`: which skill-pack command to use in each workflow step
+- `.dsf/settings/workflow.json`: the skill-pack plugins
+- `.dsf/modes.workflow.json` (optional): mode exceptions the pack needs
+- `.dsf/templates/workflow-app/` (optional): files every new app of this workflow starts with; they take precedence over the base app templates
+- anything the pack installs into the repo itself (for example `.specify/` for Spec Kit)
+
+`scripts/dsf/new-workflow.sh <name>` creates a new workflow repo from an empty one.
+
 ## Settings layers
 
 `.claude/settings.json` is generated; never edit it by hand. `make settings` merges:
