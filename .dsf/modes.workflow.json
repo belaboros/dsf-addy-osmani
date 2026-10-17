@@ -1,0 +1,6 @@
+{
+  "$comment": "SPEC.md is the pointer the agent-skills commands look for; like specs/, it changes only in design mode.",
+  "modes": {
+    "build": { "protect": ["SPEC.md"] }
+  }
+}
