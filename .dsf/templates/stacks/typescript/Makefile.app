@@ -28,14 +28,14 @@ audit:
 # Called by the PostToolUse hook for each edited file.
 lint-file-stack:
 	@case "$(FILE)" in \
-	  *.ts|*.tsx|*.js|*.mjs|*.cjs) $(NPX) prettier --write --log-level warn "$(FILE)" && $(NPX) eslint --fix --max-warnings 0 "$(FILE)" ;; \
+	  *.ts|*.tsx|*.js|*.mjs|*.cjs) $(NPX) prettier --write --log-level warn "$(FILE)" && $(NPX) eslint --fix --no-warn-ignored --max-warnings 0 "$(FILE)" ;; \
 	  *.json|*.md|*.yml|*.yaml) $(NPX) prettier --write --log-level warn "$(FILE)" ;; \
 	esac
 
 # Called by the git pre-commit hook: fast checks on staged files only.
 precommit-stack:
 	@files=$$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|mjs|cjs)$$' || true); \
-	if [ -n "$$files" ]; then $(NPX) prettier --check $$files && $(NPX) eslint --max-warnings 0 $$files; fi
+	if [ -n "$$files" ]; then $(NPX) prettier --check $$files && $(NPX) eslint --no-warn-ignored --max-warnings 0 $$files; fi
 
 uat: ## run the acceptance scenarios (uat/features/*.feature with steps in uat/steps/); UAT=@critical for a subset
 	@if ls uat/features/*.feature >/dev/null 2>&1; then $(NPX) bddgen && $(NPX) playwright test $(if $(UAT),--grep $(UAT)); else echo "No UAT scenarios yet."; fi
